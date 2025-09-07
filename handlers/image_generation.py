@@ -1,3 +1,9 @@
+import sys
+import os
+
+# Добавляем корневую директорию проекта в Python path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from aiogram import Dispatcher, F
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
@@ -40,14 +46,31 @@ async def handle_text_generation(message: Message, state: FSMContext):
         
         if result['success']:
             # Отправляем результат
-            await message.answer_photo(
-                photo=result['image_path'],
-                caption=f"🎨 <b>Готово!</b>\n\n<i>Запрос:</i> {message.text}",
-                reply_markup=get_generation_keyboard()
-            )
-            
-            # Удаляем сообщение о обработке
-            await processing_msg.delete()
+            try:
+                # Отправляем файл по пути
+                caption = f"🎨 <b>Готово!</b>\n\n<i>Запрос:</i> {message.text}"
+                if 'note' in result:
+                    caption += f"\n\n<i>{result['note']}</i>"
+                
+                # Отправляем изображение как файл
+                from aiogram.types import FSInputFile
+                photo = FSInputFile(result['image_path'])
+                
+                await message.answer_photo(
+                    photo=photo,
+                    caption=caption,
+                    reply_markup=get_generation_keyboard()
+                )
+                
+                # Удаляем сообщение о обработке
+                await processing_msg.delete()
+                
+            except Exception as e:
+                await message.answer(
+                    f"❌ <b>Ошибка отправки изображения:</b>\n{str(e)}\n\n"
+                    "Попробуйте еще раз."
+                )
+                await processing_msg.delete()
             
         else:
             await message.answer(

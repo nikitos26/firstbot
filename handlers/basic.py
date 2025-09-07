@@ -1,3 +1,9 @@
+import sys
+import os
+
+# Добавляем корневую директорию проекта в Python path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from aiogram import Dispatcher, F
 from aiogram.types import Message
 from aiogram.filters import Command, CommandStart

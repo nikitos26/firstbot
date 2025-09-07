@@ -12,6 +12,7 @@ class Config:
     
     # AI Services
     KANDINSKY_API_KEY = os.getenv('KANDINSKY_API_KEY')
+    KANDINSKY_API_SECRET = os.getenv('KANDINSKY_API_SECRET')
     KANDINSKY_API_URL = os.getenv('KANDINSKY_API_URL', 'https://api-key.fusionbrain.ai')
     
     # Database
@@ -35,6 +36,6 @@ class Config:
     @classmethod
     def validate(cls):
         """Проверяем наличие обязательных переменных"""
-        if not cls.BOT_TOKEN:
-            raise ValueError("BOT_TOKEN не найден в переменных окружения")
+        if not cls.BOT_TOKEN or cls.BOT_TOKEN == 'your_bot_token_here':
+            raise ValueError("BOT_TOKEN не найден в переменных окружения. Добавьте токен в файл .env")
         return True

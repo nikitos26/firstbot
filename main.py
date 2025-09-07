@@ -6,6 +6,11 @@ Telegram Bot для генерации и редактирования изоб�
 import asyncio
 import logging
 import os
+import sys
+
+# Добавляем корневую директорию проекта в Python path
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
@@ -49,7 +54,8 @@ async def main():
         logger.error(f"Ошибка при запуске бота: {e}")
         raise
     finally:
-        await bot.session.close()
+        if 'bot' in locals():
+            await bot.session.close()
 
 if __name__ == "__main__":
     asyncio.run(main())
